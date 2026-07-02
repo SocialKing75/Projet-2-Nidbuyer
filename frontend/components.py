@@ -490,7 +490,7 @@ def render_chatbot(profil_payload: dict, api_url: str, search_fn) -> None:
 
     c_in, c_btn = st.columns([5, 1])
     with c_in:
-        question = st.text_input("", placeholder="Ex : Quels quartiers pour un T3 à 280 000 € ?",
+        question = st.text_input("Votre question", placeholder="Ex : Quels quartiers pour un T3 à 280 000 € ?",
                                  key="chat_question", label_visibility="collapsed")
     with c_btn:
         send = st.button("Envoyer", key="chat_send", use_container_width=True)

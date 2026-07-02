@@ -17,7 +17,7 @@ for _p in (_ROOT, _FRONTEND):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-API_URL = os.getenv("NIDBUYER_API_URL", "http://localhost:8000").rstrip("/")
+API_URL = (os.getenv("API_URL") or os.getenv("NIDBUYER_API_URL") or "http://localhost:8000").rstrip("/")
 
 # ── Imports locaux (depuis frontend/) ────────────────────────────────────────
 from styles import MAIN_CSS                          # noqa: E402
@@ -68,27 +68,42 @@ for _k, _v in _DEFAULTS.items():
 
 def _backend_ok() -> bool:
     try:
-        return requests.get(f"{API_URL}/health", timeout=2).status_code == 200
+        return requests.get(f"{API_URL}/admin/status", timeout=5).status_code == 200
     except Exception:
         return False
 
 
+def _adapt(b: dict) -> dict:
+    """Résultat de POST /rechercher → format bien attendu par les composants."""
+    return {
+        "type":        b.get("type") or "",
+        "prix":        b.get("prix") or 0,
+        "surface":     b.get("surface") or 0,
+        "quartier":    b.get("quartier") or "",
+        "ville":       b.get("ville") or "",
+        "nb_pieces":   b.get("pieces") or 0,
+        "dpe":         b.get("dpe") or "",
+        "description": b.get("description") or "",
+        "url_source":  b.get("url") or "",
+        "image_url":   "",
+        "scoring":     b.get("scoring") or {},
+        "fiche_enrichie": b.get("fiche_enrichie") or {},
+    }
+
+
 def _search(query: str, n: int = 9) -> list[dict]:
-    """Recherche : API → RAG direct → mock."""
+    """Recherche via POST /rechercher (seul endpoint du backend) → mock en secours."""
+    profil = st.session_state.get("profil_payload") or {
+        "intention": st.session_state.get("profil_key", "rp"),
+        "budget_max": 2_000_000,
+    }
     try:
-        r = requests.get(f"{API_URL}/search",
-                         params={"q": query, "n_results": n}, timeout=12)
+        r = requests.post(f"{API_URL}/rechercher",
+                          json={**profil, "description_libre": query}, timeout=30)
         if r.ok:
-            data = r.json().get("results", [])
+            data = [_adapt(b) for b in r.json().get("resultats", [])]
             if data:
                 return data
-    except Exception:
-        pass
-    try:
-        from backend.rag import search_similar
-        data = search_similar(query, n_results=n)
-        if data:
-            return data
     except Exception:
         pass
     return mock_biens()
@@ -191,13 +206,18 @@ if lancer:
         "nb_pieces_min": None if pieces_min == "Peu importe" else int(pieces_min.replace("+", "")),
         "description_libre": "",
     }
+    st.session_state.profil_payload = payload  # avant _search : le profil sert à /rechercher
     with st.spinner("Analyse en cours…"):
         biens = _search(full_q, n=9)
 
     st.session_state.resultats     = biens
     st.session_state.analyse_done  = True
+<<<<<<< HEAD
     st.session_state.profil_payload = payload
     st.session_state.photo_analysis = {}
+=======
+    st.session_state.photo_analysis = analyser_photos(list(photos)) if photos else {}
+>>>>>>> 1a73d14e3a91f2d48ec373abe52d746917613a1c
     st.session_state.view          = "dashboard"
     st.rerun()
 
