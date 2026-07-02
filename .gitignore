@@ -4,6 +4,7 @@ __pycache__/
 .venv/
 venv/
 chroma_db/
+data/chroma/
 data/*.csv
 data/*.json
 data/*.parquet

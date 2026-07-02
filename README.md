@@ -31,7 +31,7 @@ app_port: 8000
 
 ## Demo
 
-URL déployée : **https://TODO**
+URL déployée : **https://nidbuyer-v2.streamlit.app** (interface) · **https://wouar-nidbuyer-backend.hf.space** (API)
 
 ## Pourquoi NidBuyer ?
 
@@ -119,7 +119,7 @@ FastAPI + Streamlit   ← interface acheteur déployée
 
 > *"Vos données P1 sont la fondation. Sans elles, pas de RAG."*
 
-Nombre d'annonces indexées dans la base RAG : **XXX** ← *à mettre à jour J1*
+Nombre d'annonces indexées dans la base RAG : **60**
 
 ## Prompt Engineering
 
