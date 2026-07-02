@@ -129,7 +129,7 @@ def render_header(profil_key: str) -> None:
 
 # ── KPIs ─────────────────────────────────────────────────────────────────────
 def render_kpis(biens: list[dict]) -> None:
-    prix_l, pm2_l, surf_l, score_l = [], [], [], []
+    prix_l, pm2_l, score_l = [], [], []
     for b in biens:
         try:
             p = float(str(b.get("prix") or "0").replace(" ", "").replace(" ", ""))
@@ -141,12 +141,6 @@ def render_kpis(biens: list[dict]) -> None:
         if v:
             pm2_l.append(v)
             score_l.append(score_info(v, b.get("quartier", "default"))["score"])
-        try:
-            s = float(str(b.get("surface") or "0").replace("m²", "").replace("m2", "").strip())
-            if s > 0:
-                surf_l.append(s)
-        except Exception:
-            pass
 
     def eur(x: float) -> str:
         return f"{int(x):,}".replace(",", " ") + " €"
@@ -161,15 +155,13 @@ def render_kpis(biens: list[dict]) -> None:
          "Prix moyen", "orange"),
         ("/m2", (eur(sum(pm2_l) / len(pm2_l)) + "/m²") if pm2_l else "N/D",
          "Prix moyen / m²", "purple"),
-        ("m2", (f"{int(sum(surf_l)/len(surf_l))} m²") if surf_l else "N/D",
-         "Surface moyenne", "green"),
         ("DVF", f"{mediane_ref:,} €/m²".replace(",", " "),
          "Médiane DVF Toulon", "teal"),
         ("pts", f"{round(sum(score_l)/len(score_l))}/100" if score_l else "N/D",
          "Score moyen", "rose"),
     ]
 
-    cols = st.columns(6)
+    cols = st.columns(len(kpis))
     for col, (icon, val, label, color) in zip(cols, kpis):
         with col:
             st.markdown(f"""
