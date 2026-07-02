@@ -125,6 +125,19 @@ def admin_sync(background_tasks: BackgroundTasks, dry_run: bool = False):
     return {"status": "sync lancée en arrière-plan", "dry_run": dry_run}
 
 
+@app.post("/admin/index-supabase")
+def admin_index_supabase(background_tasks: BackgroundTasks):
+    """Indexe dans ChromaDB les annonces stockées dans Supabase (une seule fois au déploiement)."""
+    from .index_data import get_annonces
+    from .rag import index_annonces
+
+    def _indexer():
+        index_annonces(get_annonces())
+
+    background_tasks.add_task(_indexer)
+    return {"status": "indexation Supabase lancée en arrière-plan"}
+
+
 @app.get("/admin/status")
 def admin_status():
     from pathlib import Path
