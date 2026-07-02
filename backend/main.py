@@ -54,7 +54,7 @@ def rechercher(profil: ProfilAcheteur):
     if profil.quartiers:
         filtre = {"quartier": {"$in": profil.quartiers}}
 
-    biens = search_similar(query, n_results=5, filtre_meta=filtre)
+    biens = search_similar(query, n=5, filtre_meta=filtre)
 
     mediane_dvf = {
         "rp": 4500,
