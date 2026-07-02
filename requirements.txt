@@ -5,3 +5,6 @@ sentence-transformers
 pytest
 supabase
 python-dotenv
+apscheduler
+requests
+anthropic
