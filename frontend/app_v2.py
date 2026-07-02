@@ -212,12 +212,7 @@ if lancer:
 
     st.session_state.resultats     = biens
     st.session_state.analyse_done  = True
-<<<<<<< HEAD
-    st.session_state.profil_payload = payload
     st.session_state.photo_analysis = {}
-=======
-    st.session_state.photo_analysis = analyser_photos(list(photos)) if photos else {}
->>>>>>> 1a73d14e3a91f2d48ec373abe52d746917613a1c
     st.session_state.view          = "dashboard"
     st.rerun()
 
