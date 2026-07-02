@@ -14,7 +14,7 @@ from .generique import SourceGenerique
 
 # Activer/désactiver les sources ici
 SOURCES_ACTIVES: list = [
-    # BienIciSource(),
-    # LeBonCoinSource(),
+    BienIciSource(),
+    # LeBonCoinSource(),   # bloqué par Datadome
     # SourceGenerique(),
 ]

@@ -7,6 +7,10 @@ Deux approches possibles :
   B) API interne (inspecter les requêtes réseau sur leboncoin.fr)
 """
 import requests
+
+
+class LeBonCoinBlocked(RuntimeError):
+    """LeBonCoin bloque le scraping automatisé (protection Datadome)."""
 from .base import SourceBase
 
 
@@ -15,7 +19,7 @@ class LeBonCoinSource(SourceBase):
 
     SEARCH_URL = "https://api.leboncoin.fr/finder/classified/search"
 
-    def fetch_new(self) -> list[dict]:
+    def fetch_new(self, target_size: int = 100) -> list[dict]:
         # TODO : construire le payload de recherche
         # payload = {
         #     "filters": {
@@ -28,7 +32,7 @@ class LeBonCoinSource(SourceBase):
         # response = requests.post(self.SEARCH_URL, json=payload, headers=headers)
         # annonces_brutes = response.json()["ads"]
         # return [self.normalize(self._parse(a)) for a in annonces_brutes]
-        raise NotImplementedError
+        raise LeBonCoinBlocked("API LeBonCoin protégée par Datadome — non implémenté")
 
     def _parse(self, raw: dict) -> dict:
         attrs = {a["key"]: a.get("value") for a in raw.get("attributes", [])}
