@@ -63,12 +63,15 @@ def index_annonces(annonces: list[dict]) -> None:
     """Indexe une liste d'annonces dans ChromaDB."""
     collection = get_collection()
     ids, documents, metadatas = [], [], []
-    for a in annonces:
-        ids.append(str(a.get("id", "")))
+    for i, a in enumerate(annonces):
+        # id absent selon la source (ex. Supabase) : repli sur id_source/url_source/rang
+        ids.append(str(a.get("id") or a.get("id_source") or a.get("url_source") or i))
         documents.append(a.get("description", "") or "")
-        metadatas.append(_sanitize({k: v for k, v in a.items() if k != "description"}))
+        meta = _sanitize({k: v for k, v in a.items() if k != "description"})
+        metadatas.append(meta or {"id": ids[-1]})  # Chroma refuse les metadata vides
     if ids:
-        collection.add(ids=ids, documents=documents, metadatas=metadatas)
+        # upsert : ré-indexation idempotente (add lève DuplicateIDError)
+        collection.upsert(ids=ids, documents=documents, metadatas=metadatas)
 
 
 # Alias pour l'ingestion
