@@ -23,7 +23,6 @@ API_URL = (os.getenv("API_URL") or os.getenv("NIDBUYER_API_URL") or "http://loca
 from styles import MAIN_CSS                          # noqa: E402
 from components import (                             # noqa: E402
     PROFILS_CFG,
-    analyser_photos,
     mock_biens,
     render_biens,
     render_chatbot,
@@ -156,11 +155,6 @@ with st.sidebar:
         ("chatbot",   "Chatbot IA"),
     ]
     for nav_key, nav_label in nav_items:
-        active = "active" if st.session_state.view == nav_key else ""
-        st.markdown(f"""
-<div class="nav-item {active}">
-  {nav_label}
-</div>""", unsafe_allow_html=True)
         if st.button(nav_label, key=f"nav_{nav_key}",
                      use_container_width=True):
             st.session_state.view = nav_key
@@ -175,20 +169,19 @@ with st.sidebar:
     ville  = st.selectbox("Ville",
                            ["Toulon", "La Seyne-sur-Mer", "Hyères",
                             "Six-Fours-les-Plages", "Ollioules", "La Garde"])
-    quartier  = st.text_input("Quartier(s)", placeholder="Mourillon, Centre-ville")
+    quartiers_toulon = [
+        "Mourillon", "Centre-ville", "Sainte-Anne", "Le Cap Brun",
+        "Saint-Jean-du-Var", "La Serinette", "Pont-du-Las", "Bon Rencontre",
+        "Les Routes", "Saint-Roch", "La Rode", "Escaillon",
+        "Sainte-Musse", "Siblas", "La Loubière", "Claret",
+    ]
+    qrt_list  = st.multiselect("Quartier(s)", quartiers_toulon,
+                               placeholder="Choisissez un ou plusieurs quartiers")
     type_bien = st.selectbox("Type de bien",
-                              ["Appartement", "Maison", "Studio", "T2", "T3", "T4", "T5+", "Immeuble"])
+                              ["Appartement", "Maison", "Studio", "T2", "T3", "T4", "T5+"])
     surf_min  = st.number_input("Surface min (m²)", 0, 500, 25)
     surf_max  = st.number_input("Surface max (m²)", 0, 1_000, 250)
     pieces_min = st.selectbox("Pièces min", ["Peu importe", "1", "2", "3", "4", "5+"])
-
-    question = st.text_area("Question libre",
-                             placeholder="Ex : appartement calme, proche mer…",
-                             height=80)
-
-    photos = st.file_uploader("Photos du bien (optionnel)",
-                               type=["jpg", "jpeg", "png", "webp"],
-                               accept_multiple_files=True)
 
     st.markdown("")
     lancer = st.button("Lancer l'analyse", type="primary", use_container_width=True)
@@ -203,16 +196,15 @@ with st.sidebar:
 # ══════════════════════════════════════════════════════════════════════════════
 
 if lancer:
-    qrt_list = [q.strip() for q in quartier.split(",") if q.strip()]
     full_q   = " ".join(filter(None, [type_bien, ville, *qrt_list,
-                                       f"budget {budget}", question]))
+                                       f"budget {budget}"]))
     payload  = {
         "intention":    st.session_state.profil_key,
         "budget_max":   budget,
         "surface_min":  surf_min,
         "quartiers":    qrt_list,
         "nb_pieces_min": None if pieces_min == "Peu importe" else int(pieces_min.replace("+", "")),
-        "description_libre": question,
+        "description_libre": "",
     }
     st.session_state.profil_payload = payload  # avant _search : le profil sert à /rechercher
     with st.spinner("Analyse en cours…"):
@@ -220,7 +212,12 @@ if lancer:
 
     st.session_state.resultats     = biens
     st.session_state.analyse_done  = True
+<<<<<<< HEAD
+    st.session_state.profil_payload = payload
+    st.session_state.photo_analysis = {}
+=======
     st.session_state.photo_analysis = analyser_photos(list(photos)) if photos else {}
+>>>>>>> 1a73d14e3a91f2d48ec373abe52d746917613a1c
     st.session_state.view          = "dashboard"
     st.rerun()
 

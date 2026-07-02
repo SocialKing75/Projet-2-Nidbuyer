@@ -46,18 +46,31 @@ footer { display: none !important; }
 }
 [data-testid="stSidebar"] [data-baseweb="select"] svg { fill: #94a3b8 !important; }
 
-/* Bouton principal sidebar */
+/* Boutons sidebar (navigation) */
 [data-testid="stSidebar"] .stButton > button {
-    background: linear-gradient(135deg, #f97316, #ea580c) !important;
-    color: white !important;
+    background: rgba(255,255,255,0.06) !important;
+    color: #cbd5e1 !important;
     border: none !important;
     border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 0.9em !important;
+    padding: 9px 0 !important;
+    transition: background 0.15s, color 0.15s !important;
+}
+[data-testid="stSidebar"] .stButton > button:hover {
+    background: rgba(255,255,255,0.12) !important;
+    color: #f8fafc !important;
+}
+
+/* Bouton principal sidebar (Lancer l'analyse) */
+[data-testid="stSidebar"] .stButton > button[kind="primary"] {
+    background: #1e4070 !important;
+    color: white !important;
     font-weight: 700 !important;
     font-size: 0.95em !important;
     padding: 10px 0 !important;
-    transition: opacity 0.2s !important;
 }
-[data-testid="stSidebar"] .stButton > button:hover { opacity: 0.88 !important; }
+[data-testid="stSidebar"] .stButton > button[kind="primary"]:hover { opacity: 0.88 !important; }
 
 /* Sliders sidebar */
 [data-testid="stSidebar"] [data-testid="stSlider"] { color: #cbd5e1 !important; }
@@ -99,18 +112,6 @@ footer { display: none !important; }
 .kpi-value { font-size: 1.6em; font-weight: 800; color: #0b1f3a; line-height: 1.1; }
 .kpi-label { font-size: 0.75em; color: #94a3b8; font-weight: 600;
              text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
-
-/* ── NAV MENU SIDEBAR ─────────────────────────────────────────────────────── */
-.nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 14px; border-radius: 10px; cursor: pointer;
-    color: #94a3b8; font-size: 0.9em; font-weight: 500;
-    margin-bottom: 4px; transition: background 0.15s, color 0.15s;
-    text-decoration: none;
-}
-.nav-item:hover  { background: rgba(255,255,255,0.08); color: #f1f5f9; }
-.nav-item.active { background: rgba(249,115,22,0.18); color: #fdba74; font-weight: 700; }
-.nav-icon { width: 20px; text-align: center; font-size: 1em; }
 
 /* ── LOGO SIDEBAR ─────────────────────────────────────────────────────────── */
 .sidebar-logo {

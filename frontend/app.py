@@ -173,13 +173,12 @@ def afficher_fiche_bien(bien, idx):
         st.markdown(f"""
         <div class="fiche-decision">
         <div class="{score_color}">Score d'opportunité: {score['score']}/100 — {score['label']}</div>
-
-        **Localisation:** {bien['quartier']}
-        **€/m²:** {score['prix_m2']:.0f}€/m² (écart médiane: {score['ecart_pct']:+.1f}%)
-        **Type:** {bien['type']}
-
-        **Description:**
-        {bien['description']}
+        <p><strong>Localisation:</strong> {bien['quartier']}<br>
+        <strong>€/m²:</strong> {score['prix_m2']:.0f}€/m² (écart médiane: {score['ecart_pct']:+.1f}%)<br>
+        <strong>Type:</strong> {bien['type']}</p>
+        <p><strong>Description:</strong><br>
+        {bien.get('description') or 'Non renseignée'}</p>
+        </div>
         """, unsafe_allow_html=True)
 
         if fiche.get('opportunites'):
@@ -201,7 +200,6 @@ def afficher_fiche_bien(bien, idx):
             st.write(f"(Loyer estimé: {rend['loyer_mensuel_estime']:.0f}€/mois)")
 
         st.markdown("---")
-        st.markdown("</div>", unsafe_allow_html=True)
 
 
 # ============================================================================
@@ -248,6 +246,9 @@ def afficher_recherche():
             criteres = formulaire_rs()
         elif profil == "mixte":
             criteres = formulaire_mixte()
+        else:
+            st.error(f"Profil inconnu: {profil}")
+            return
 
         if st.button("Lancer la recherche", type="primary", use_container_width=True):
             with st.spinner("Recherche en cours..."):
@@ -354,11 +355,13 @@ def formulaire_rp():
         value=""
     )
 
+    pieces_map = {"Peu importe": None, "T2": 2, "T3": 3, "T4": 4, "T5+": 5}
     return {
         "intention": "rp",
         "budget_max": budget,
         "surface_min": surface_min,
         "quartiers": localisation,
+        "nb_pieces_min": pieces_map.get(nb_pieces),
         "description_libre": f"{description} luminosite_min:{luminosite_min}"
     }
 
